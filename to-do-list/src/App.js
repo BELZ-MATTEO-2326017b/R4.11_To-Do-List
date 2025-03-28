@@ -1,33 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Header from './components/Header';
+import TaskList from './components/TaskList';
+import CategoryList from './components/CategoryList';
+import StartupModal from './components/StartupModal';
+import FormModal from './FormModal';
 
 function App() {
     const [tasks, setTasks] = useState([]);
-    const [newTask, setNewTask] = useState('');
+    const [categories, setCategories] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [modalType, setModalType] = useState('');
+    const [viewMode, setViewMode] = useState('current');
+    const [sortBy, setSortBy] = useState('dueDate');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showReset, setShowReset] = useState(true);
+    const [filterCategory, setFilterCategory] = useState(null);
 
     useEffect(() => {
         const savedTasks = localStorage.getItem('tasks');
+        const savedCategories = localStorage.getItem('categories');
+
         if (savedTasks) setTasks(JSON.parse(savedTasks));
+        if (savedCategories) setCategories(JSON.parse(savedCategories));
     }, []);
 
     useEffect(() => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
-    }, [tasks]);
+        localStorage.setItem('categories', JSON.stringify(categories));
+    }, [tasks, categories]);
 
-    const addTask = (e) => {
-        e.preventDefault();
-        if (newTask.trim() === '') return;
+    const filteredTasks = tasks.filter(task => {
+        if (viewMode === 'current' && task.done) return false;
+        if (filterCategory && !task.categories.includes(filterCategory)) return false;
+        if (searchTerm && searchTerm.length >= 3) {
+            return task.title.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        return true;
+    });
 
-        const task = {
-            id: Date.now().toString(),
-            title: newTask,
-            done: false,
-            creationDate: new Date().toISOString()
-        };
+    const sortedTasks = [...filteredTasks].sort((a, b) => {
+        if (sortBy === 'dueDate') {
+            if (!a.dueDate) return 1;
+            if (!b.dueDate) return -1;
+            return new Date(a.dueDate) - new Date(b.dueDate);
+        } else if (sortBy === 'title') {
+            return a.title.localeCompare(b.title);
+        } else if (sortBy === 'creationDate') {
+            return new Date(b.creationDate) - new Date(a.creationDate);
+        } else if (sortBy === 'category') {
+            const aCategory = categories.find(cat => cat.id === a.categories[0])?.title || '';
+            const bCategory = categories.find(cat => cat.id === b.categories[0])?.title || '';
+            return aCategory.localeCompare(bCategory);
+        }
+        return 0;
+    });
 
-        setTasks([...tasks, task]);
-        setNewTask('');
+    const addTask = (newTask) => {
+        setTasks([...tasks, newTask]);
+    };
+
+    const addCategory = (newCategory) => {
+        setCategories([...categories, newCategory]);
     };
 
     const toggleTaskDone = (taskId) => {
@@ -42,41 +76,141 @@ function App() {
         }
     };
 
+    const deleteCategory = (categoryId) => {
+        if (window.confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
+            const updatedTasks = tasks.map(task => ({
+                ...task,
+                categories: task.categories.filter(id => id !== categoryId)
+            }));
+
+            setTasks(updatedTasks);
+            setCategories(categories.filter(cat => cat.id !== categoryId));
+
+            if (filterCategory === categoryId) {
+                setFilterCategory(null);
+            }
+        }
+    };
+
+    const resetApp = () => {
+        if (window.confirm('Êtes-vous sûr de vouloir réinitialiser l\'application ?')) {
+            setTasks([]);
+            setCategories([]);
+        }
+    };
+
+    const loadBackup = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.tasks && data.categories) {
+                        setTasks(data.tasks);
+                        setCategories(data.categories);
+                        setShowReset(false);
+                        alert('Sauvegarde chargée avec succès !');
+                    } else {
+                        alert('Format de fichier de sauvegarde invalide');
+                    }
+                } catch (error) {
+                    alert('Échec de l\'analyse du fichier de sauvegarde : ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    };
+
+    const downloadBackup = () => {
+        const data = { tasks, categories };
+        const json = JSON.stringify(data);
+        const blob = new Blob([json], { type: 'application/json' });
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = 'todolist_backup.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const startFresh = () => {
+        setShowReset(false);
+    };
+
+    const openModalSelector = () => {
+        setModalType('selector');
+        setShowModal(true);
+    };
+
+    const selectModalType = (type) => {
+        setModalType(type);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+        setModalType('');
+    };
+
+    const filterByCategory = (categoryId) => {
+        setFilterCategory(categoryId === filterCategory ? null : categoryId);
+    };
+
     return (
         <div className="App">
-            <Header />
-
-            <form onSubmit={addTask} className="task-form">
-                <input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    placeholder="Ajouter une nouvelle tâche..."
+            {showReset ? (
+                <StartupModal
+                    loadBackup={loadBackup}
+                    startFresh={startFresh}
                 />
-                <button type="submit">Ajouter</button>
-            </form>
+            ) : (
+                <>
+                    <Header
+                        viewMode={viewMode}
+                        setViewMode={setViewMode}
+                        setSortBy={setSortBy}
+                        downloadBackup={downloadBackup}
+                        resetApp={resetApp}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                        filterCategory={filterCategory}
+                        setFilterCategory={setFilterCategory}
+                        categories={categories}
+                    />
 
-            <div className="task-list">
-                {tasks.length === 0 && (
-                    <div className="no-tasks">
-                        Aucune tâche à afficher. Ajoutez votre première tâche !
-                    </div>
-                )}
+                    <TaskList
+                        tasks={sortedTasks}
+                        categories={categories}
+                        toggleTaskDone={toggleTaskDone}
+                        deleteTask={deleteTask}
+                        filterByCategory={filterByCategory}
+                    />
 
-                {tasks.map(task => (
-                    <div key={task.id} className={`task-item ${task.done ? 'done' : ''}`}>
-                        <div className="task-header">
-                            <h3>{task.title}</h3>
-                            <div className="task-actions">
-                                <button onClick={() => toggleTaskDone(task.id)}>
-                                    {task.done ? 'Annuler' : 'Terminer'}
-                                </button>
-                                <button onClick={() => deleteTask(task.id)}>Supprimer</button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    <CategoryList
+                        categories={categories}
+                        deleteCategory={deleteCategory}
+                        filterCategory={filterCategory}
+                        filterByCategory={filterByCategory}
+                    />
+
+                    <button className="floating-action-button" onClick={openModalSelector}>+</button>
+                </>
+            )}
+
+            <FormModal
+                showModal={showModal}
+                modalType={modalType}
+                categories={categories}
+                selectModalType={selectModalType}
+                addTask={addTask}
+                addCategory={addCategory}
+                closeModal={closeModal}
+            />
         </div>
     );
 }
