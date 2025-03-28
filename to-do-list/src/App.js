@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './assets/App.css';
 import Header from './components/Header';
 import TaskList from './components/TaskList';
 import CategoryList from './components/CategoryList';
