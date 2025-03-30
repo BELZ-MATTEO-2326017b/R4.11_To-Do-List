@@ -161,6 +161,12 @@ function App() {
         setFilterCategory(categoryId === filterCategory ? null : categoryId);
     };
 
+    const returnToStartup = () => {
+        if (window.confirm('Êtes-vous sûr de vouloir revenir à la page d\'accueil ? Toutes vos informations seront perdues.')) {
+            setShowReset(true);
+        }
+    };
+
     return (
         <div className="App">
             {showReset ? (
@@ -181,6 +187,7 @@ function App() {
                         filterCategory={filterCategory}
                         setFilterCategory={setFilterCategory}
                         categories={categories}
+                        returnToStartup={returnToStartup}
                     />
 
                     <TaskList

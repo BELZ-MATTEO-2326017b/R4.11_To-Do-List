@@ -134,7 +134,7 @@ function TaskForm({ categories, onSubmit, onClose }) {
                     </div>
 
                     <div className="form-group">
-                        <label>Catégories:</label>
+                        <label>Catégories</label>
                         <div className="category-options">
                             {categories.map(category => (
                                 <label key={category.id} className="category-option">

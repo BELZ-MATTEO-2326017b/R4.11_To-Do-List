@@ -11,17 +11,18 @@ function Header({
                     setSearchTerm,
                     filterCategory,
                     setFilterCategory,
-                    categories
+                    categories,
+                    returnToStartup
                 }) {
     return (
         <header className="App-header">
             <div className="header-controls">
                 <div className="app-title">
-                    <h2>TODO List App</h2>
+                    <h2 onClick={returnToStartup}>TO-DO LIST</h2>
                 </div>
                 <div className="view-buttons">
                     <button onClick={() => setViewMode(viewMode === 'all' ? 'current' : 'all')}>
-                        {viewMode === 'all' ? 'Tâches actuelles' : 'Toutes les tâches'}
+                        {viewMode === 'all' ? 'Toutes les tâches' : 'Tâches actuelles'}
                     </button>
                 </div>
                 <div className="right-controls">
@@ -44,9 +45,9 @@ function Header({
 
             {filterCategory && (
                 <div className="active-filter">
-          <span>
-            Filtrage par : {categories.find(cat => cat.id === filterCategory)?.title}
-          </span>
+                  <span>
+                    Filtrage par : {categories.find(cat => cat.id === filterCategory)?.title}
+                  </span>
                     <button onClick={() => setFilterCategory(null)}>Effacer le filtre</button>
                 </div>
             )}

@@ -4,7 +4,7 @@ import parametresIcon from '../assets/images/parametres.png';
 
 function FilterDropdown({ setSortBy, downloadBackup, resetApp }) {
     return (
-        <>
+        <div className="filter-controls">
             <div className="filter-container">
                 <button className="filter-button" title="Options de tri">
                     <img src={filtreIcon} alt="Trier" />
@@ -26,7 +26,7 @@ function FilterDropdown({ setSortBy, downloadBackup, resetApp }) {
                     <button onClick={resetApp}>Réinitialiser l'application</button>
                 </div>
             </div>
-        </>
+        </div>
     );
 }
 
