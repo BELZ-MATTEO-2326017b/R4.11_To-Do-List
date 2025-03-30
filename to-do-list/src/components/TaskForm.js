@@ -8,7 +8,11 @@ function TaskForm({ categories, onSubmit, onClose }) {
         urgent: false,
         categories: [],
         contacts: [''],
-        done: false
+        done: false,
+        isRecurring: false,
+        recurrenceInterval: 1,
+        recurrenceUnit: 'day',
+        recurrenceEndDate: ''
     });
 
     const [errors, setErrors] = useState({});
@@ -119,8 +123,56 @@ function TaskForm({ categories, onSubmit, onClose }) {
                             name="dueDate"
                             value={task.dueDate}
                             onChange={handleChange}
+                            disabled={task.isRecurring}
+                            style={task.isRecurring ? { opacity: 0.5 } : {}}
                         />
                     </div>
+
+                    <div className="form-group checkbox">
+                        <input
+                            type="checkbox"
+                            id="isRecurring"
+                            name="isRecurring"
+                            checked={task.isRecurring}
+                            onChange={handleChange}
+                        />
+                        <label htmlFor="isRecurring">Tâche récurrente</label>
+                    </div>
+
+                    {task.isRecurring && (
+                        <div className="form-group recurrence-options">
+                            <label>Répéter tous les</label>
+                            <div className="recurrence-inputs" style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    name="recurrenceInterval"
+                                    value={task.recurrenceInterval}
+                                    onChange={handleChange}
+                                    style={{ width: '70px' }}
+                                />
+                                <select
+                                    name="recurrenceUnit"
+                                    value={task.recurrenceUnit}
+                                    onChange={handleChange}
+                                >
+                                    <option value="day">jours</option>
+                                    <option value="week">semaines</option>
+                                    <option value="month">mois</option>
+                                </select>
+                            </div>
+
+                            <label htmlFor="recurrenceEndDate" style={{ marginTop: '12px', display: 'block' }}>Jusqu'au</label>
+                            <input
+                                type="date"
+                                id="recurrenceEndDate"
+                                name="recurrenceEndDate"
+                                value={task.recurrenceEndDate}
+                                onChange={handleChange}
+                                required={task.isRecurring}
+                            />
+                        </div>
+                    )}
 
                     <div className="form-group checkbox">
                         <input

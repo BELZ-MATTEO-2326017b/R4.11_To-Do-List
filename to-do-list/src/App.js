@@ -57,7 +57,48 @@ function App() {
     });
 
     const addTask = (newTask) => {
-        setTasks([...tasks, newTask]);
+        if (newTask.isRecurring) {
+            const recurringTasks = generateRecurringTasks(newTask);
+            setTasks([...tasks, ...recurringTasks]);
+        } else {
+            setTasks([...tasks, newTask]);
+        }
+    };
+
+    const generateRecurringTasks = (baseTask) => {
+        const tasks = [];
+        const { recurrenceInterval, recurrenceUnit, recurrenceEndDate } = baseTask;
+        const endDate = new Date(recurrenceEndDate);
+        let currentDate = new Date();
+
+        let formattedCurrentDate = currentDate.toISOString().split('T')[0];
+
+        while (currentDate <= endDate) {
+            const taskCopy = {
+                ...baseTask,
+                id: Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                dueDate: formattedCurrentDate,
+                creationDate: new Date().toISOString()
+            };
+
+            delete taskCopy.isRecurring;
+            delete taskCopy.recurrenceInterval;
+            delete taskCopy.recurrenceUnit;
+            delete taskCopy.recurrenceEndDate;
+
+            tasks.push(taskCopy);
+
+            if (recurrenceUnit === 'day') {
+                currentDate.setDate(currentDate.getDate() + parseInt(recurrenceInterval));
+            } else if (recurrenceUnit === 'week') {
+                currentDate.setDate(currentDate.getDate() + (parseInt(recurrenceInterval) * 7));
+            } else if (recurrenceUnit === 'month') {
+                currentDate.setMonth(currentDate.getMonth() + parseInt(recurrenceInterval));
+            }
+            formattedCurrentDate = currentDate.toISOString().split('T')[0];
+        }
+
+        return tasks;
     };
 
     const addCategory = (newCategory) => {
@@ -140,7 +181,14 @@ function App() {
     };
 
     const startFresh = () => {
-        setShowReset(false);
+        if (window.confirm('Êtes-vous sûr de vouloir démarrer de zéro ? Toutes les données existantes seront supprimées.')) {
+            localStorage.removeItem('tasks');
+            localStorage.removeItem('categories');
+
+            setTasks([]);
+            setCategories([]);
+            setShowReset(false);
+        }
     };
 
     const openModalSelector = () => {
