@@ -1,70 +1,62 @@
-# Getting Started with Create React App
+# Application de TO-DO LIST
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Résumé de l'application
 
-## Available Scripts
+Cette application est une To-Do List interactive développée avec React qui permet aux utilisateurs de créer, organiser et suivre leurs tâches quotidiennes. L'application offre des fonctionnalités telles que la catégorisation des tâches, la définition de dates d'échéance, le marquage des tâches urgentes, l'ajout de contacts associés et la gestion des tâches récurrentes.
 
-In the project directory, you can run:
+## Structure des fichiers (src)
 
-### `npm start`
+```
+to-do-list/
+└── src/
+    ├── assets/
+    │   └── App.css
+    ├── components/
+    │   ├── TaskForm.js
+    │   ├── TaskList.js
+    │   ├── TaskCard.js
+    │   ├── CategoryManager.js
+    │   └── ...
+    ├── App.js
+    └── index.js
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Description des fichiers
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### App.js
+Composant principal qui gère l'état global de l'application et l'affichage des différents composants.
 
-### `npm test`
+### components/TaskForm.js
+Formulaire de création et d'édition de tâches avec validation des champs, gestion des tâches récurrentes, catégories et contacts associés.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### components/TaskList.js
+Affiche la liste des tâches avec options de filtrage et de tri.
 
-### `npm run build`
+### components/TaskCard.js
+Composant qui affiche une tâche individuelle avec ses détails et options d'actions.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### components/CategoryManager.js
+Permet de créer, modifier et supprimer des catégories pour organiser les tâches.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### assets/App.css
+Contient les styles de l'application, notamment pour les modales, la liste des tâches, les boutons d'action flottants, et l'apparence générale de l'interface.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Hébergement
 
-### `npm run eject`
+L'application est hébergée et accessible à l'adresse suivante:
+[https://r4-11-to-do-list.vercel.app](https://r4-11-to-do-list.vercel.app)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Exécution du projet en local
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Pour lancer le projet sur votre machine locale, suivez ces étapes:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+cd .\to-do-list\
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+L'application sera accessible à l'adresse [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-## Learn More
+## Auteur
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Projet réalisé par Belz Matteo dans le cadre de la ressource R4-11.
